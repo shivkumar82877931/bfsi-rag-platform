@@ -1,63 +1,47 @@
 # BFSI RAG Platform
 
-A Retrieval-Augmented Generation (RAG) pipeline built for BFSI (Banking, Financial Services & Insurance) use cases — starting with querying insurance SOP documents (e.g. motor claims processing) using natural language.
+An enterprise-style Retrieval-Augmented Generation (RAG) platform that lets employees ask natural-language questions over BFSI documents (policies, SOPs, claims guidelines, regulatory documents) and receive grounded, source-cited answers.
 
-## Overview
+## Business Problem
 
-This project implements an end-to-end RAG pipeline:
+BFSI organizations hold large volumes of policies, SOPs, claims guidelines, and regulatory documents. Employees currently search these manually, which is slow and error-prone. This project builds a system to answer natural-language questions directly from these documents, with traceable citations back to the source page.
 
-1. **Ingestion** — loads source documents (PDFs) into the pipeline
-2. **Chunking** — splits documents into retrievable text segments
-3. **Embeddings** — converts text chunks into vector representations
-4. **Retrieval** — fetches the most relevant chunks for a given query
-5. **Generation** — uses an LLM to generate answers grounded in retrieved context
+## Architecture
+
+PDF/DOCX/TXT -> Document Ingestion -> Parsing -> Cleaning -> Chunking -> Metadata Enrichment -> Embeddings -> Vector DB -> Retrieval -> Reranking -> Context -> LLM -> Grounded Answer + Citation
 
 ## Tech Stack
 
 - Python
-- ChromaDB (vector store)
-- [Embedding model / LLM provider — update with what you're using]
-- LangChain (if used — update based on actual implementation)
+- PyMuPDF / Unstructured (document processing)
+- LangChain
+- Hugging Face / OpenAI-compatible embeddings
+- Chroma (vector DB)
+- OpenAI-compatible LLM
+- FastAPI
+- Docker
+- RAGAS / custom evaluation
+- AWS (later phase)
 
-## Project Structure
+## Build Phases
 
-\`\`\`
-bfsi-rag-platform/
-├── config/           # configuration files
-├── data/             # source documents (not tracked in git)
-├── notebooks/        # exploratory notebooks
-├── src/
-│   ├── ingestion/     # document loading
-│   ├── chunking/      # text chunking logic
-│   ├── embeddings/    # embedding generation
-│   ├── retrieval/     # vector search / retrieval logic
-│   ├── generation/    # LLM-based answer generation
-│   ├── api/           # API layer (if applicable)
-│   └── evaluation/    # evaluation scripts
-├── tests/            # unit tests
-└── vectorstore/      # persisted vector DB (not tracked in git)
-\`\`\`
+1. Ingestion - load, parse, clean, attach metadata
+2. Chunking - 500-800 token chunks, 50-100 token overlap
+3. Embeddings - vectorize each chunk
+4. Retrieval - top-K similarity search
+5. Generation - LLM answers grounded strictly in retrieved context
+6. Citation - every answer includes source document and page number
+7. Evaluation - Precision, Recall, Faithfulness, Answer Relevance, Context Relevance, Latency
 
 ## Setup
 
-\`\`\`bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-\`\`\`
-
-Add a \`.env\` file with required API keys (not tracked in git):
-\`\`\`
-OPENAI_API_KEY=your_key_here
-\`\`\`
-
-## Usage
-
-[Update this section with actual run instructions once the pipeline is wired end-to-end]
 
 ## Status
 
-🚧 Work in progress — building out retrieval and API layers.
+In progress: Ingestion done, Chunking done, Embeddings done, Retrieval next, then Generation, Evaluation, API, Docker, AWS deployment.
 
 ## Author
 
